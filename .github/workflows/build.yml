@@ -1,42 +1,45 @@
-name: CI
+name: CI-CD
+
 on:
   push:
-    branches: [ main ]
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
 
 jobs:
-  build:
-    runs-on: Ubuntu 20.04
 
-    steps:
-      - uses: actions/checkout@v2
+  my-job:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: ./frontend
 
-      #used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+      strategy:
+        matrix:
+          node-version: [16.x]
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
+      steps:
+      - name: CHECK-OUT GIT REPOSITORY
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
-
-      - uses: actions/cache@v2
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: INSTALL DEPENDENCIES
+        run: npm ci
+      - name: BUILDING APP
+        run: npm run build --if-present
+      #- name: TESTINT APP
+      #- run: npm test
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v5
         with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: stable
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+        
+          image: user/frontend    
+          tags: latest
+          registry: docker.io
+          dockerfile: frontend/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
