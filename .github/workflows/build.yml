@@ -15,7 +15,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10.13'
+          python-version: '3.10.14'
+
+      - name: Update package lists
+        run: sudo apt-get update
 
       - name: Install build dependencies
         run: |
@@ -61,15 +64,3 @@ jobs:
             libgstreamer1.0-dev \
             git \
             cython
-
-      - name: Install buildozer
-        run: |
-          git clone https://github.com/kivy/buildozer.git
-          cd buildozer
-          sudo python3 setup.py install
-
-      - name: Build APK
-        run: |
-          buildozer init
-          buildozer -v android debug
-
