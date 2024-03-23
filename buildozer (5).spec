@@ -35,7 +35,7 @@ android.ndk = 19b
 # (bool) Indicate whether the application should be fullscreen or not
 fullscreen = 0
 #pip version
- pip install --upgrade pip
+ pip version==24.0
 
 # (str) Presplash background color (for Android only)
 # (str) Background color in rrggbb format
