@@ -49,6 +49,8 @@ cd buildozer
 python setup.py build
 pip install -e
 
+pip install pip==24.0
+
 # (str) Presplash background color (for Android only)
 # (str) Background color in rrggbb format
 #presplash.color = #FFFFFF
