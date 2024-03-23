@@ -37,7 +37,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
         
-          image: user/frontend    
+          image: user/frontend     
           tags: latest
           registry: docker.io
           dockerfile: frontend/Dockerfile
