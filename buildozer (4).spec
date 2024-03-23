@@ -35,6 +35,20 @@ android.ndk = 19b
 # (bool) Indicate whether the application should be fullscreen or not
 fullscreen = 0
 
+# via pip (latest stable, recommended)
+# if you use a virtualenv, don't use the `--user` option
+pip install --user buildozer
+
+# latest dev version
+# if you use a virtualenv, don't use the `--user` option
+pip install --user https://github.com/kivy/buildozer/archive/master.zip
+
+# git clone, for working on buildozer
+git clone https://github.com/kivy/buildozer
+cd buildozer
+python setup.py build
+pip install -e
+
 # (str) Presplash background color (for Android only)
 # (str) Background color in rrggbb format
 #presplash.color = #FFFFFF
