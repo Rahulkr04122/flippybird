@@ -13,10 +13,9 @@ android:
   #   - CAMERA
   #   - INTERNET
 
-   Optional. Specify the Android API level
-   android.api: 27
+  
 
-   Optional. Specify the minimum SDK version
+   #Optional. Specify the minimum SDK version
    android.minapi: 21
 
   # Optional. Specify the package name
