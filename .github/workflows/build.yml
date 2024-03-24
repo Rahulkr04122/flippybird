@@ -1,34 +1,43 @@
-android:
-  # Required for Android builds
-  requirements : python3==3.10.14,hostpython3==3.10.14,kivymd,pillow
-   
+name: CI
+on:
+  push:
+    branches: [ main ]
 
-  # Optional. Specify additional Python packages if needed
-  # Note: Ensure these packages are compatible with Android
-  # requirements:
-  #   - somepackage
+jobs:
+  build:
+    runs-on: latest
 
-  # Optional. Specify permissions for your app (e.g., camera, internet)
-  # permissions:
-  #   - CAMERA
-  #   - INTERNET
+    steps:
+      - uses: actions/checkout@v2
 
-  
+     #used to cache dependencies with a timeout
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
 
-   #Optional. Specify the minimum SDK version
-   android.minapi: 21
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v2
+        with:
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
 
-  # Optional. Specify the package name
-   package.name: com.flippybird
 
-  # Optional. Specify the version code
-   package.version_code: 1.0
+      - uses: actions/cache@v2
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-  # Optional. Specify the version name
-   package.version: 0.1
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: stable
 
-  # Optional. Specify additional build properties
-   buildozer:
-     android:
-       exclude_files: README.md
-       arch: armeabi-v7a
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
