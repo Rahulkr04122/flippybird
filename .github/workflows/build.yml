@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu latest
+    runs-on: ubuntu-22.04.4
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +21,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .buildozer_global
-          key:  buildozer-global-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+
 
 
       - uses: actions/cache@v2
@@ -34,7 +35,7 @@ jobs:
         id: buildozer
         with:
           command: buildozer android debug
-          buildozer_version: stable
+          buildozer_version: 1.5.0
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
