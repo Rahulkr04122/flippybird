@@ -1,43 +1,35 @@
-name: CI
-on:
-  push:
-    branches: [ main ]
+android:
+  # Required for Android builds
+  requirements : python3==3.10.14,hostpython3==3.10.14,kivymd,pillow
+   
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+  # Optional. Specify additional Python packages if needed
+  # Note: Ensure these packages are compatible with Android
+  # requirements:
+  #   - somepackage
 
-    steps:
-      - uses: actions/checkout@v2
-  
+  # Optional. Specify permissions for your app (e.g., camera, internet)
+  # permissions:
+  #   - CAMERA
+  #   - INTERNET
 
-      #used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+   Optional. Specify the Android API level
+   android.api: 27
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+   Optional. Specify the minimum SDK version
+   android.minapi: 21
 
-      - uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+  # Optional. Specify the package name
+   package.name: com.flippybird
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: 1.5.0
+  # Optional. Specify the version code
+   package.version_code: 1.0
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+  # Optional. Specify the version name
+   package.version: 0.1
+
+  # Optional. Specify additional build properties
+   buildozer:
+     android:
+       exclude_files: README.md
+       arch: armeabi-v7a
